@@ -1,5 +1,9 @@
 .idea
 *.js.map
 *.d.ts
-*.js
 node_modules
+tests/**/*.js
+src/**/*.js
+playground/**/*.js
+playground/node_modules
+
