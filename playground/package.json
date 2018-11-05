@@ -1,0 +1,24 @@
+{
+  "name": "playground",
+  "version": "1.0.0",
+  "description": "playground for trying out that npm package will works",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "files": [
+    "src/**"
+  ],
+  "scripts": {
+    "start": "npm run build && concurrently \"npm run watch-js\" \"npm run watch-ts\" \"npm run watch-link\"",
+    "build": "npm link ../ && tsc",
+    "watch-link": "nodemon --watch --delay 500ms app --watch ../src npm run link ../",
+    "watch-js": "nodemon ./src/index.js --delay 500ms ",
+    "watch-ts": "tsc --watch "
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^4.0.1",
+    "nodemon": "^1.18.6",
+    "typescript": "^3.1.6"
+  }
+}
