@@ -51,16 +51,16 @@ export function debounce<T extends any[]>(cb: (...params: T) => any, ms: number)
 export function build(acc: any = []) {
     return {
         latest() {
-            return build([...acc, (cb: any) => latest(cb)]);
+            return build([(cb: any) => latest(cb), ...acc, ]);
         },
         debounce(ms: number) {
-            return build([...acc, (cb: any) => debounce(cb, ms)])
+            return build([ (cb: any) => debounce(cb, ms), ...acc, ])
         },
         distinctUntilChanged(equals?: any) {
-            return build([...acc, (cb: any) => distinctUntilChanged(cb, equals)]);
+            return build([ (cb: any) => distinctUntilChanged(cb, equals), ...acc, ]);
         },
         callback<T extends any[]>(cb: (...params: T) => any): (...params: T) => any {
-            return [...acc].reverse().reduce((prev, next) => next(prev), cb)
+            return [...acc].reduce((prev, next) => next(prev), cb)
         }
     }
 }
