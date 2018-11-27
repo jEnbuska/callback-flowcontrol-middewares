@@ -48,18 +48,24 @@ export function debounce<T extends any[]>(cb: (...params: T) => any, ms: number)
     };
 }
 
-export function build(acc: any = []) {
+export type Builder<T extends any[]> = {
+    latest: () => Builder<T>;
+    debounce: (ms: number) => Builder<T>
+    distinctUntilChanged: (equals?: (a: T, b: T) => boolean) => Builder<T>;
+    callback: (cb: (...params: T) => any) => (...params: T) => any;
+}
+export function build<T extends any[]>(acc: any = []): Builder<T> {
     return {
         latest() {
-            return build([(cb: any) => latest(cb), ...acc, ]);
+            return build([(cb: any) => latest<T>(cb), ...acc, ]);
         },
-        debounce(ms: number) {
-            return build([ (cb: any) => debounce(cb, ms), ...acc, ])
+        debounce(ms) {
+            return build([ (cb: any) => debounce<T>(cb, ms), ...acc, ])
         },
-        distinctUntilChanged(equals?: any) {
-            return build([ (cb: any) => distinctUntilChanged(cb, equals), ...acc, ]);
+        distinctUntilChanged(equals) {
+            return build([ (cb: any) => distinctUntilChanged<T>(cb, equals), ...acc, ]);
         },
-        callback<T extends any[]>(cb: (...params: T) => any): (...params: T) => any {
+        callback(cb) {
             return [...acc].reduce((prev, next) => next(prev), cb)
         }
     }
