@@ -1,5 +1,6 @@
-import {debounce, distinctUntilChanged, latest, } from 'callback-flowcontrol-middewares';
+import {debounce, distinctUntilChanged, latest, build} from 'callback-flowcontrol-middewares';
 
+const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
 async function doStuff(){
     const debouncer = debounce((text: string) => console.log(text), 100)
     debouncer('text');
@@ -21,7 +22,29 @@ async function doStuff(){
     const delays = [250, 150, 50];
     for (let i = 0; i <3 ; i++) {
         latestCallback(i);
-        await new Promise(res => setTimeout(res, delays[i]));
+        await sleep(delays[i]);
+    }
+
+    const combined = build()
+        .debounce(20)
+        .distinctUntilChanged()
+        .latest()
+        .callback(async function * (str: string): any{
+            console.log('proceed 0', str);
+            yield await new Promise(res => setTimeout(res, 100))
+            console.log('proceed 1', str);
+            yield await new Promise(res => setTimeout(res, 100))
+
+            console.log('proceed 2', str);
+            yield await new Promise(res => setTimeout(res, 100))
+            console.log('done', str);
+        });
+
+    const delays2= [10, 150, 50];
+    const strings = ['a','b','c']
+    for (let i = 0; i <3 ; i++) {
+        combined(strings[i]);
+        await sleep(delays2[i]);
     }
 }
 doStuff();
